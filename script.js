@@ -134,13 +134,21 @@ class MindDump {
             <div class="meta">
                 <span class="timestamp">${this.formatTime(thought.timestamp)}</span>
                 <div class="actions">
+                    <button class="action-btn edit-btn" title="Edit">
+                        <i class="fas fa-pen"></i>
+                    </button>
                     <button class="action-btn" onclick="mindDump.deleteThought('${thought.id}')" title="Delete">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
             </div>
         `;
-        // Double-click to edit on the whole thought bar (except delete button)
+        // Edit button event
+        thoughtElement.querySelector('.edit-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.editThought(thought, thoughtElement);
+        });
+        // Double-click to edit on the whole thought bar (except action buttons)
         thoughtElement.addEventListener('dblclick', (e) => {
             if (e.target.closest('.action-btn')) return;
             this.editThought(thought, thoughtElement);
