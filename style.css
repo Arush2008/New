@@ -32,7 +32,7 @@
 
 /* ===== DARK THEME ===== */
 [data-theme="dark"] {
-    --primary: #60a5fa;
+    --primary: #2c8afd;
     --secondary: #818cf8;
     --accent: #fbbf24;
     --bg-primary: #18181b;
@@ -41,7 +41,7 @@
     --text-primary: #f3f4f6;
     --text-secondary: #a1a1aa;
     --text-accent: #60a5fa;
-    --border: #9c9c9c;
+    --border: #616161;
     --shadow: rgba(0,0,0,0.3);
     --gradient: linear-gradient(135deg, #232336, #18181b);
 }
