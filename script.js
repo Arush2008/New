@@ -3,8 +3,6 @@
 class MindDump {
     constructor() {
         this.thoughts = JSON.parse(localStorage.getItem('mindDumpThoughts')) || [];
-        // Only support 'light' and 'dark' themes
-        // this.currentTheme = localStorage.getItem('mindDumpTheme') || 'light';
         this.timer = null;
         this.timerDuration = 25 * 60; // 25 minutes
         this.currentTime = this.timerDuration;
@@ -12,18 +10,13 @@ class MindDump {
     }
 
     init() {
-        // this.setupTheme();
         this.setupEventListeners();
         this.renderAllThoughts();
         this.updateStats();
     }
 
-    // ===== THEME MANAGEMENT REMOVED =====
-
     // ===== EVENT LISTENERS =====
     setupEventListeners() {
-        // Theme toggle button removed
-        // ...existing code...
         const dumpInput = document.getElementById('dump-input');
         const dumpBtn = document.getElementById('dump-btn');
         dumpBtn.addEventListener('click', () => this.dumpThought());
@@ -91,40 +84,20 @@ class MindDump {
     }
 
     categorizeThought(text) {
-        // Improved: Only one category per thought, explicit tags prioritized, robust regex
         const lower = text.toLowerCase();
-
-        // 1. Links
         if (/https?:\/\/|www\./i.test(text)) return 'links';
-
-        // 2. Explicit tags (highest priority)
         if (/#todo|!urgent|❗/i.test(text)) return 'todos';
         if (/#idea|💡/i.test(text)) return 'ideas';
         if (/@reminder|📅/i.test(text)) return 'reminders';
         if (/#question|❓/i.test(text)) return 'questions';
         if (/~quote|^"|^'.*'|^“|^”/i.test(text.trim()) || /".*"|“.*”/.test(text)) return 'quotes';
         if (/#rant|😤/i.test(text)) return 'rants';
-
-        // 3. Todos (tasks, urgent, actionable)
         if (/\b(todo|task|need to|should|must|deadline|due|fix|complete|finish|buy|call|email|send|schedule|appointment|meeting|follow up|remind me|asap|soon|today|tomorrow|next week)\b/i.test(lower)) return 'todos';
-
-        // 4. Ideas (suggestions, creative, new concepts)
         if (/\b(idea|concept|maybe|could|innovation|brainstorm|suggestion|imagine|what if|invention|improve|solution|plan|proposal|experiment|try|explore)\b/i.test(lower)) return 'ideas';
-
-        // 5. Questions (inquiries, doubts, curiosity)
-        // Only match if sentence ends with '?' or contains question words at the start
         if (/\?$/.test(text.trim()) || /^(why|how|what|when|where|who|can|should|could|would|is|are|do|does|did|will|may|might)\b/i.test(lower)) return 'questions';
-
-        // 6. Reminders (dates, times, reminders)
         if (/\b(remember|remind|don't forget|note to self|due date|deadline|alert|alarm|set a reminder|calendar|event|birthday|anniversary|meeting|appointment|schedule|plan|task for)\b/i.test(lower)) return 'reminders';
-
-        // 7. Quotes (citations, sayings, references)
         if (/\b(said|quote|mentioned|according to|as per|once said|famous|proverb|saying|wisdom|in the words of|noted|remarked|wrote|stated|quoted)\b/i.test(lower)) return 'quotes';
-
-        // 8. Rants (emotional, venting, strong opinions)
         if (/\b(rant|hate|annoying|frustrated|angry|mad|upset|irritated|vent|complain|sucks|ridiculous|unfair|why me|ugh|argh|ranting|furious)\b/i.test(lower)) return 'rants';
-
-        // 9. Uncategorized (fallback)
         return 'uncategorized';
     }
 
@@ -132,40 +105,32 @@ class MindDump {
         const tags = [];
         const tagRegex = /#(\w+)/g;
         let match;
-        
         while ((match = tagRegex.exec(text)) !== null) {
             tags.push(match[1]);
         }
-        
         return tags;
     }
 
     renderThought(thought) {
         const category = thought.category;
         const container = document.getElementById(`${category}-content`);
-        
         if (!container) return;
-        
         const thoughtElement = document.createElement('div');
         thoughtElement.className = `thought-item ${thought.category}`;
         thoughtElement.dataset.thoughtId = thought.id;
-        
         thoughtElement.innerHTML = `
             <div class="content">${this.formatContent(thought.content)}</div>
             <div class="meta">
                 <span class="timestamp">${this.formatTime(thought.timestamp)}</span>
                 <div class="actions">
-                    <button class="action-btn" onclick="mindDump.deleteThought(${thought.id})" title="Delete">
+                    <button class="action-btn" onclick="mindDump.deleteThought('${thought.id}')" title="Delete">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
             </div>
         `;
-        
         container.appendChild(thoughtElement);
         this.updateCategoryCount(category);
-        
-        // Mark category as having content and make it visible
         const categoryElement = container.closest('.category');
         if (categoryElement) {
             categoryElement.classList.add('has-content');
@@ -174,16 +139,10 @@ class MindDump {
     }
 
     formatContent(content) {
-        // Format links
         content = content.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
-        
-        // Format hashtags
         content = content.replace(/#(\w+)/g, '<span style="color: var(--primary); font-weight: 500;">#$1</span>');
-        
-        // Format emphasis
         content = content.replace(/\*([^*]+)\*/g, '<em>$1</em>');
         content = content.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-        
         return content;
     }
 
@@ -191,7 +150,6 @@ class MindDump {
         const now = new Date();
         const time = new Date(timestamp);
         const diff = now - time;
-        
         if (diff < 60000) return 'just now';
         if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
         if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
@@ -199,12 +157,9 @@ class MindDump {
     }
 
     renderAllThoughts() {
-        // Clear all categories
         document.querySelectorAll('.category-content').forEach(container => {
             container.innerHTML = '';
         });
-        
-        // Render all thoughts
         this.thoughts.forEach(thought => this.renderThought(thought));
     }
 
@@ -212,12 +167,9 @@ class MindDump {
         const count = this.thoughts.filter(t => t.category === category).length;
         const countElement = document.querySelector(`[data-category="${category}"] .count`);
         const categoryElement = document.querySelector(`[data-category="${category}"]`);
-        
         if (countElement) {
             countElement.textContent = count;
         }
-        
-        // Add or remove has-content class based on count
         if (categoryElement) {
             if (count > 0) {
                 categoryElement.classList.add('has-content');
@@ -231,15 +183,10 @@ class MindDump {
         const totalThoughts = this.thoughts.length;
         const totalWords = this.thoughts.reduce((sum, thought) => 
             sum + thought.content.split(/\s+/).length, 0);
-        
         document.getElementById('thought-count').textContent = `${totalThoughts} thoughts`;
         document.getElementById('word-count').textContent = `${totalWords} words`;
-        
-        // Update all category counts
         ['todos', 'ideas', 'rants', 'links', 'quotes', 'questions', 'reminders', 'uncategorized']
             .forEach(category => this.updateCategoryCount(category));
-        
-        // Update total count in view toggle
         this.updateTotalCount();
     }
 
@@ -247,19 +194,69 @@ class MindDump {
         const input = document.getElementById('dump-input');
         const text = input.value;
         const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
-        
         // You can add live word count display here if needed
     }
 
     deleteThought(id) {
-        if (!confirm('Delete this thought?')) return;
-        
-        this.thoughts = this.thoughts.filter(t => t.id !== id);
+        // Find and remove the thought
+        const idx = this.thoughts.findIndex(t => String(t.id) === String(id));
+        if (idx === -1) return;
+        const deletedThought = this.thoughts[idx];
+        this.thoughts.splice(idx, 1);
         this.saveToStorage();
         this.renderAllThoughts();
         this.updateStats();
-        
-        this.showNotification('Thought deleted', 'info');
+        this.showUndoNotification(deletedThought);
+    }
+
+    showUndoNotification(deletedThought) {
+        // Remove any existing undo toast
+        document.querySelectorAll('.toast-undo').forEach(el => el.remove());
+        // Create toast with undo button
+        const toast = document.createElement('div');
+        toast.className = 'toast toast-info toast-undo';
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 1em;
+            animation: slideIn 0.3s ease;
+        `;
+        toast.textContent = 'Thought deleted';
+        const undoBtn = document.createElement('button');
+        undoBtn.textContent = 'Undo';
+        undoBtn.style.cssText = `
+            background: white;
+            color: var(--primary);
+            border: none;
+            border-radius: 6px;
+            padding: 4px 14px;
+            font-weight: 600;
+            margin-left: 12px;
+            cursor: pointer;
+            font-size: 1em;
+        `;
+        undoBtn.onclick = () => {
+            this.thoughts.push(deletedThought);
+            this.saveToStorage();
+            this.renderAllThoughts();
+            this.updateStats();
+            toast.remove();
+            this.showNotification('Undo successful!', 'success');
+        };
+        toast.appendChild(undoBtn);
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.animation = 'slideOut 0.3s ease forwards';
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
     }
 
     saveToStorage() {
@@ -273,19 +270,15 @@ class MindDump {
             this.stopTimer();
             return;
         }
-
         this.currentTime = this.timerDuration;
         display.classList.add('active');
-        
         this.timer = setInterval(() => {
             this.currentTime--;
             this.updateTimerDisplay();
-            
             if (this.currentTime <= 0) {
                 this.timerComplete();
             }
         }, 1000);
-
         this.showNotification('Focus timer started! 🎯', 'success');
     }
 
@@ -303,10 +296,8 @@ class MindDump {
             clearInterval(this.timer);
             this.timer = null;
         }
-        
         const display = document.getElementById('timer-display');
         display.classList.remove('active');
-        
         this.currentTime = this.timerDuration;
         this.updateTimerDisplay();
     }
@@ -314,8 +305,6 @@ class MindDump {
     timerComplete() {
         this.stopTimer();
         this.showNotification('Focus session complete! 🎉', 'success');
-        
-        // Optional: Play a sound or show a more prominent notification
         if ('Notification' in window && Notification.permission === 'granted') {
             new Notification('MindDump', {
                 body: 'Focus session complete!',
@@ -335,7 +324,6 @@ class MindDump {
         const overlay = document.getElementById('zen-overlay');
         overlay.classList.toggle('active');
         this.isZenMode = !this.isZenMode;
-        
         if (this.isZenMode) {
             this.showNotification('Zen mode activated 🧘', 'info');
         }
@@ -343,12 +331,10 @@ class MindDump {
 
     clearAll() {
         if (!confirm('Clear all thoughts? This cannot be undone.')) return;
-        
         this.thoughts = [];
         this.saveToStorage();
         this.renderAllThoughts();
         this.updateStats();
-        
         this.showNotification('All thoughts cleared', 'info');
     }
 
@@ -357,15 +343,12 @@ class MindDump {
             thoughts: this.thoughts,
             timestamp: new Date()
         };
-        
         const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
         const url = URL.createObjectURL(blob);
-        
         const a = document.createElement('a');
         a.href = url;
         a.download = `minddump-${new Date().toISOString().split('T')[0]}.json`;
         a.click();
-        
         URL.revokeObjectURL(url);
         this.showNotification('Session saved! 💾', 'success');
     }
@@ -383,7 +366,6 @@ class MindDump {
     exportData(format) {
         let content = '';
         let filename = `minddump-${new Date().toISOString().split('T')[0]}`;
-        
         switch(format) {
             case 'json':
                 content = JSON.stringify(this.thoughts, null, 2);
@@ -398,15 +380,12 @@ class MindDump {
                 filename += '.txt';
                 break;
         }
-        
         const blob = new Blob([content], {type: 'text/plain'});
         const url = URL.createObjectURL(blob);
-        
         const a = document.createElement('a');
         a.href = url;
         a.download = filename;
         a.click();
-        
         URL.revokeObjectURL(url);
         this.closeModal();
         this.showNotification(`Exported as ${format.toUpperCase()}! 📄`, 'success');
@@ -414,9 +393,7 @@ class MindDump {
 
     generateMarkdown() {
         let md = '# MindDump Export\n\n';
-        
         const categories = ['todos', 'ideas', 'questions', 'reminders', 'quotes', 'rants', 'links', 'uncategorized'];
-        
         categories.forEach(cat => {
             const thoughts = this.thoughts.filter(t => t.category === cat);
             if (thoughts.length > 0) {
@@ -426,18 +403,15 @@ class MindDump {
                 });
             }
         });
-        
         return md;
     }
 
     generatePlainText() {
         let text = 'MINDDUMP EXPORT\n' + '='.repeat(50) + '\n\n';
-        
         this.thoughts.forEach(thought => {
             text += `[${thought.category.toUpperCase()}] ${thought.content}\n`;
             text += `Time: ${this.formatTime(thought.timestamp)}\n\n`;
         });
-        
         return text;
     }
 
@@ -447,7 +421,6 @@ class MindDump {
 
     startBrainMelt() {
         this.showNotification('Brain melt mode activated! 🧠🔥', 'info');
-        // Add some fun visual effects or auto-clear after timer
     }
 
     toggleVoiceDump() {
@@ -455,7 +428,6 @@ class MindDump {
     }
 
     showNotification(message, type = 'info') {
-        // Create a simple toast notification
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
         toast.textContent = message;
@@ -470,9 +442,7 @@ class MindDump {
             z-index: 10000;
             animation: slideIn 0.3s ease;
         `;
-        
         document.body.appendChild(toast);
-        
         setTimeout(() => {
             toast.style.animation = 'slideOut 0.3s ease forwards';
             setTimeout(() => toast.remove(), 300);
@@ -483,8 +453,6 @@ class MindDump {
     showCategoriesView() {
         document.querySelector('.container').style.display = 'none';
         document.getElementById('categories-page').style.display = 'block';
-        
-        // Update view buttons
         document.getElementById('dump-view-btn')?.classList.remove('active');
         document.getElementById('categories-view-btn')?.classList.add('active');
     }
@@ -492,13 +460,10 @@ class MindDump {
     showDumpView() {
         document.querySelector('.container').style.display = 'block';
         document.getElementById('categories-page').style.display = 'none';
-        
-        // Update view buttons
         document.getElementById('categories-view-btn')?.classList.remove('active');
         document.getElementById('dump-view-btn')?.classList.add('active');
     }
 
-    // Update the total count in the view toggle
     updateTotalCount() {
         const totalCount = this.thoughts.length;
         const totalCountElement = document.getElementById('total-count');
@@ -522,7 +487,6 @@ style.textContent = `
         from { transform: translateX(100%); opacity: 0; }
         to { transform: translateX(0); opacity: 1; }
     }
-    
     @keyframes slideOut {
         from { transform: translateX(0); opacity: 1; }
         to { transform: translateX(100%); opacity: 0; }
@@ -534,11 +498,9 @@ document.head.appendChild(style);
 document.addEventListener('DOMContentLoaded', () => {
     const toggleBtn = document.getElementById('light-dark-toggle');
     if (!toggleBtn) return;
-    // Set initial icon
     function updateIcon(theme) {
         toggleBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
     }
-    // Get theme from localStorage or default
     let theme = localStorage.getItem('mindDumpTheme') || 'light';
     document.documentElement.setAttribute('data-theme', theme);
     updateIcon(theme);
