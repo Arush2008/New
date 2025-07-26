@@ -1,0 +1,221 @@
+    <!-- Light/Dark Toggle Button -->
+    <button id="light-dark-toggle" class="light-dark-toggle" title="Toggle light/dark mode">🌙</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 MindDump - Clean Brain Unclutter Tool</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="title">🧠 MindDump</h1>
+            <p class="subtitle">Clean Brain Unclutter Tool</p>
+        </div>
+        
+        <!-- Controls -->
+        <div class="controls">
+            <button class="control-btn" id="focus-timer">
+                <i class="fas fa-clock"></i>
+                <span>Focus Timer</span>
+            </button>
+            <button class="control-btn" id="brain-melt">
+                <i class="fas fa-fire"></i>
+                <span>Brain Melt</span>
+            </button>
+            <button class="control-btn" id="zen-mode">
+                <i class="fas fa-leaf"></i>
+                <span>Zen Mode</span>
+            </button>
+            <button class="control-btn" id="voice-dump">
+                <i class="fas fa-microphone"></i>
+                <span>Voice Dump</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Timer Display -->
+    <div class="timer-display" id="timer-display">
+        <span id="timer-text">20:00</span>
+        <button id="timer-stop" class="timer-stop">×</button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Dump Zone -->
+        <div class="dump-zone">
+            <div class="dump-header">
+                <h2>💭 Brain Dump</h2>
+                <div class="dump-stats">
+                    <span id="word-count">0 words</span>
+                    <span id="thought-count">0 thoughts</span>
+                </div>
+            </div>
+            
+            <!-- Main Input -->
+            <div class="input-container">
+                <textarea 
+                    id="dump-input" 
+                    placeholder="Start typing your thoughts, ideas, tasks, or anything on your mind...
+
+Quick tags: #idea !urgent ?question @reminder ~quote *rant
+
+Press Enter to save each thought!"
+                    rows="6"
+                ></textarea>
+                <button class="dump-btn" id="dump-btn">
+                    <i class="fas fa-plus"></i>
+                    Add Thought
+                </button>
+            </div>
+
+            <!-- Quick Prompts -->
+            <div class="quick-prompts">
+                <h3> Need inspiration?</h3>
+                <div class="prompt-buttons">
+                    <button class="prompt-btn">What's on your mind?</button>
+                    <button class="prompt-btn">Random thought?</button>
+                    <button class="prompt-btn">What if...?</button>
+                    <button class="prompt-btn">Idea brainstorm</button>
+                    <button class="prompt-btn">Quick note</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Toggle Buttons -->
+        <div class="view-toggle">
+            <button class="view-btn active" id="dump-view-btn">
+                <i class="fas fa-edit"></i>
+                <span>Dump View</span>
+            </button>
+            <button class="view-btn" id="categories-view-btn">
+                <i class="fas fa-list"></i>
+                <span>Categories</span>
+                <span class="total-count" id="total-count">0</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Categories Page - Hidden by default -->
+    <div class="categories-page" id="categories-page" style="display: none;">
+        <div class="categories-container">
+            <div class="categories-header">
+                <h2>📋 Your Organized Thoughts</h2>
+                <button class="back-btn" id="back-to-dump">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Dump</span>
+                </button>
+            </div>
+            
+            <!-- Categories Panel -->
+            <div class="categories">
+                <!-- To-Dos -->
+                <div class="category" data-category="todos">
+                    <div class="category-header">
+                        <h3><i class="fas fa-check-square"></i> To-Dos</h3>
+                        <span class="count">0</span>
+                    </div>
+                    <div class="category-content" id="todos-content"></div>
+                </div>
+
+                <!-- Ideas -->
+                <div class="category" data-category="ideas">
+                    <div class="category-header">
+                        <h3><i class="fas fa-lightbulb"></i> Ideas</h3>
+                        <span class="count">0</span>
+                    </div>
+                    <div class="category-content" id="ideas-content"></div>
+                </div>
+
+                <!-- Rants -->
+                <div class="category" data-category="rants">
+                    <div class="category-header">
+                        <h3><i class="fas fa-angry"></i> Rants</h3>
+                        <span class="count">0</span>
+                    </div>
+                    <div class="category-content" id="rants-content"></div>
+                </div>
+
+                <!-- Links -->
+                <div class="category" data-category="links">
+                    <div class="category-header">
+                        <h3><i class="fas fa-link"></i> Links</h3>
+                        <span class="count">0</span>
+                    </div>
+                    <div class="category-content" id="links-content"></div>
+                </div>
+
+                <!-- Quotes -->
+                <div class="category" data-category="quotes">
+                    <div class="category-header">
+                        <h3><i class="fas fa-quote-right"></i> Quotes</h3>
+                        <span class="count">0</span>
+                    </div>
+                    <div class="category-content" id="quotes-content"></div>
+                </div>
+
+                <!-- Questions -->
+                <div class="category" data-category="questions">
+                    <div class="category-header">
+                        <h3><i class="fas fa-question-circle"></i> Questions</h3>
+                        <span class="count">0</span>
+                    </div>
+                    <div class="category-content" id="questions-content"></div>
+                </div>
+
+                <!-- Reminders -->
+                <div class="category" data-category="reminders">
+                    <div class="category-header">
+                        <h3><i class="fas fa-bell"></i> Reminders</h3>
+                        <span class="count">0</span>
+                    </div>
+                    <div class="category-content" id="reminders-content"></div>
+                </div>
+
+                <!-- Uncategorized -->
+                <div class="category" data-category="uncategorized">
+                    <div class="category-header">
+                        <h3><i class="fas fa-sticky-note"></i> Other Notes</h3>
+                        <span class="count">0</span>
+                    </div>
+                    <div class="category-content" id="uncategorized-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Zen Mode Overlay -->
+    <div class="zen-overlay" id="zen-overlay">
+        <div class="zen-content">
+            <h2>Zen Mode</h2>
+            <div class="breathing-circle"></div>
+            <p>Breathe in... breathe out... let your thoughts flow</p>
+            <button class="zen-close" id="zen-close">Exit Zen</button>
+        </div>
+        <audio id="zen-audio" loop>
+            <source src="https://www.soundjay.com/misc/sounds/rain-01.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal" id="export-modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>Export Your Brain Dump</h2>
+            <div class="export-options">
+                <button class="export-btn" data-format="json">JSON</button>
+                <button class="export-btn" data-format="markdown">Markdown</button>
+                <button class="export-btn" data-format="txt">Plain Text</button>
+            </div>
+        </div>
+    </div> 
+
+    <script src="script.js"></script>
+</body>
+</html>
