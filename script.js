@@ -19,6 +19,7 @@ class MindDump {
     setupEventListeners() {
         const dumpInput = document.getElementById('dump-input');
         const dumpBtn = document.getElementById('dump-btn');
+        const categoryPreview = document.getElementById('category-preview');
         dumpBtn.addEventListener('click', () => this.dumpThought());
         dumpInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -26,7 +27,17 @@ class MindDump {
                 this.dumpThought();
             }
         });
-        dumpInput.addEventListener('input', () => this.updateInputStats());
+        dumpInput.addEventListener('input', () => {
+            this.updateInputStats();
+            // Live category preview as you type
+            if (categoryPreview) {
+                const text = dumpInput.value;
+                const category = this.categorizeThought(text);
+                categoryPreview.textContent = text.trim()
+                    ? `Category: ${category.charAt(0).toUpperCase() + category.slice(1)}`
+                    : '';
+            }
+        });
         document.getElementById('focus-timer')?.addEventListener('click', () => this.startFocusTimer());
         document.getElementById('brain-melt')?.addEventListener('click', () => this.startBrainMelt());
         document.getElementById('zen-mode')?.addEventListener('click', () => this.toggleZenMode());
@@ -119,7 +130,7 @@ class MindDump {
         thoughtElement.className = `thought-item ${thought.category}`;
         thoughtElement.dataset.thoughtId = thought.id;
         thoughtElement.innerHTML = `
-            <div class="content">${this.formatContent(thought.content)}</div>
+            <div class="content" tabindex="0">${this.formatContent(thought.content)}</div>
             <div class="meta">
                 <span class="timestamp">${this.formatTime(thought.timestamp)}</span>
                 <div class="actions">
@@ -129,6 +140,11 @@ class MindDump {
                 </div>
             </div>
         `;
+        // Double-click to edit on the whole thought bar (except delete button)
+        thoughtElement.addEventListener('dblclick', (e) => {
+            if (e.target.closest('.action-btn')) return;
+            this.editThought(thought, thoughtElement);
+        });
         container.appendChild(thoughtElement);
         this.updateCategoryCount(category);
         const categoryElement = container.closest('.category');
@@ -136,6 +152,44 @@ class MindDump {
             categoryElement.classList.add('has-content');
             categoryElement.classList.add('expanded');
         }
+    }
+
+    editThought(thought, thoughtElement) {
+        const contentDiv = thoughtElement.querySelector('.content');
+        const original = thought.content;
+        // Create an input for editing
+        const input = document.createElement('textarea');
+        input.value = original;
+        input.style.width = '100%';
+        input.style.minHeight = '40px';
+        input.style.fontSize = '1em';
+        input.style.fontFamily = 'inherit';
+        contentDiv.replaceWith(input);
+        input.focus();
+
+        // Save on blur or Enter
+        const save = () => {
+            const newText = input.value.trim();
+            if (newText && newText !== original) {
+                thought.content = newText;
+                thought.category = this.categorizeThought(newText);
+                this.saveToStorage();
+                this.renderAllThoughts();
+                this.updateStats();
+            } else {
+                // Restore original if unchanged or empty
+                this.renderAllThoughts();
+            }
+        };
+        input.addEventListener('blur', save);
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                input.blur();
+            } else if (e.key === 'Escape') {
+                this.renderAllThoughts();
+            }
+        });
     }
 
     formatContent(content) {
