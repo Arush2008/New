@@ -909,14 +909,6 @@ body {
     }
 }
 
-/* ===== FOCUS STATES ===== */
-button:focus,
-textarea:focus,
-.thought-item:focus {
-    outline: 2px solid var(--primary);
-    outline-offset: 2px;
-}
-
 /* ===== PRINT STYLES ===== */
 @media print {
     .theme-selector,
