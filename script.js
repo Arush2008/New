@@ -6,6 +6,7 @@ class MindDump {
         this.timer = null;
         this.timerDuration = 25 * 60; // 25 minutes
         this.currentTime = this.timerDuration;
+        this.isZenMode = false;
         this.init();
     }
 
@@ -92,6 +93,9 @@ class MindDump {
         
         // Show success feedback
         this.showNotification('Thought dumped! 🧠', 'success');
+        // Update category preview
+        const categoryPreview = document.getElementById('category-preview');
+        if (categoryPreview) categoryPreview.textContent = '';
     }
 
     categorizeThought(text) {
@@ -380,6 +384,14 @@ class MindDump {
         const input = document.getElementById('dump-input');
         input.value = promptText + '\n\n';
         input.focus();
+        // Update category preview
+        const categoryPreview = document.getElementById('category-preview');
+        if (categoryPreview) {
+            const category = this.categorizeThought(promptText);
+            categoryPreview.textContent = promptText.trim()
+                ? `Category: ${category.charAt(0).toUpperCase() + category.slice(1)}`
+                : '';
+        }
     }
 
     toggleZenMode() {
@@ -388,6 +400,12 @@ class MindDump {
         this.isZenMode = !this.isZenMode;
         if (this.isZenMode) {
             this.showNotification('Zen mode activated 🧘', 'info');
+            // Optionally play audio
+            const audio = document.getElementById('zen-audio');
+            if (audio) audio.play();
+        } else {
+            const audio = document.getElementById('zen-audio');
+            if (audio) audio.pause();
         }
     }
 
