@@ -589,3 +589,13 @@ document.addEventListener('DOMContentLoaded', () => {
         updateIcon(theme);
     });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    // ===== ADD CATEGORY BUTTON POPUP =====
+    const addCategoryBtn = document.getElementById('add-category-btn');
+    if (addCategoryBtn) {
+        addCategoryBtn.addEventListener('click', () => {
+            mindDump?.showNotification('Add category coming soon! 🗂️', 'info');
+        });
+    }
+});
