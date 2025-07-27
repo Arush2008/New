@@ -106,13 +106,11 @@ class MindDump {
         if (/@reminder|📅/i.test(text)) return 'reminders';
         if (/#question|❓/i.test(text)) return 'questions';
         if (/~quote|^"|^'.*'|^“|^”/i.test(text.trim()) || /".*"|“.*”/.test(text)) return 'quotes';
-        if (/#rant|😤/i.test(text)) return 'rants';
         if (/\b(todo|task|need to|should|must|deadline|due|fix|complete|finish|buy|call|email|send|schedule|appointment|meeting|follow up|remind me|asap|soon|today|tomorrow|next week)\b/i.test(lower)) return 'todos';
         if (/\b(idea|concept|maybe|could|innovation|brainstorm|suggestion|imagine|what if|invention|improve|solution|plan|proposal|experiment|try|explore)\b/i.test(lower)) return 'ideas';
         if (/\?$/.test(text.trim()) || /^(why|how|what|when|where|who|can|should|could|would|is|are|do|does|did|will|may|might)\b/i.test(lower)) return 'questions';
         if (/\b(remember|remind|don't forget|note to self|due date|deadline|alert|alarm|set a reminder|calendar|event|birthday|anniversary|meeting|appointment|schedule|plan|task for)\b/i.test(lower)) return 'reminders';
         if (/\b(said|quote|mentioned|according to|as per|once said|famous|proverb|saying|wisdom|in the words of|noted|remarked|wrote|stated|quoted)\b/i.test(lower)) return 'quotes';
-        if (/\b(rant|hate|annoying|frustrated|angry|mad|upset|irritated|vent|complain|sucks|ridiculous|unfair|why me|ugh|argh|ranting|furious)\b/i.test(lower)) return 'rants';
         return 'uncategorized';
     }
 
