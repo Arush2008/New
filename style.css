@@ -380,7 +380,6 @@ body {
     align-items: center;
     margin-bottom: var(--space-xl);
     flex-wrap: wrap;
-    gap: var(--space-md);
 }
 .categories-header h2 {
     font-size: 2rem;
@@ -935,4 +934,31 @@ textarea:focus,
         color: black;
         border: 1px solid #ccc;
     }
+}
+
+/* ===== add category ===== */
+
+.categories-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--space-xl);
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+/* add-category-btn */
+.add-category-btn {
+    align-items: center;
+    position: static;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-right: 15px;
+}
+.add-category-btn:hover {
+    background: var(--secondary);
+    transform: translateY(-1px);
 }

@@ -106,17 +106,27 @@ Press Enter to save each thought!"
             </button>
         </div>
     </div>
+    
+
 
     <!-- Categories Page - Hidden by default -->
     <div class="categories-page" id="categories-page" style="display: none;">
         <div class="categories-container">
-            <div class="categories-header">
-                <h2>📋 Your Organized Thoughts</h2>
-                <button class="back-btn" id="back-to-dump">
-                    <i class="fas fa-arrow-left"></i>
-                    <span>Back to Dump</span>
-                </button>
-            </div>
+
+            <!-- add new category button-->
+                <div class="categories-header">
+                    <h2>📋 Your Organized Thoughts</h2>
+                    <div style="display: flex; gap: var(--space-xs);">
+                        <button class="add-category-btn" id="add-category-btn">
+                            <i class="fas fa-plus"></i>
+                            <span>Add Category</span>
+                        </button>
+                        <button class="back-btn" id="back-to-dump">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Back to Dump</span>
+                        </button>
+                    </div>
+                </div>
             
             <!-- Categories Panel -->
             <div class="categories">
@@ -137,7 +147,7 @@ Press Enter to save each thought!"
                     </div>
                     <div class="category-content" id="ideas-content"></div>
                 </div>
-                
+
                 <!-- Links -->
                 <div class="category" data-category="links">
                     <div class="category-header">
